@@ -248,41 +248,42 @@ int main(){
 
 		if (sf::Mouse::isButtonPressed(leftMouseButton) || sf::Mouse::isButtonPressed(rightMouseButton)) {
 			sf::Vector2i position = sf::Mouse::getPosition(window);
-			if (position.x >= 0 && position.x <= windowWidth) {
-				if (position.y >= 0 && position.y <= 512) {
-					int tileY = (position.y / 32) * 16;
-					int tileX = (position.x / 32);
-					int tilePosition = tileY + tileX;
+			std::cout << position.x << ", " << position.y << std::endl;
+			if (position.x > 0 && position.x < windowWidth && position.y > 0 && position.y < windowHeight) {
+				if (position.x > 0 && position.x < windowWidth) {
+					if (position.y > 0 && position.y < 511) {
+						int tileY = (position.y / 32) * 16;
+						int tileX = (position.x / 32);
+						int tilePosition = tileY + tileX;
 
-					if (tilePosition != lastTilePos) {
-						std::cout << tilePosition << ", " << lastTilePos << std::endl;
-						lastTilePos = tilePosition;
-						std::cout << lastTilePos << std::endl;
-						if (sf::Mouse::isButtonPressed(leftMouseButton)) {
-							level[tilePosition] = 1;
+						if (tilePosition != lastTilePos) {
+							//std::cout << tilePosition << ", " << lastTilePos << std::endl;
+							lastTilePos = tilePosition;
+							std::cout << lastTilePos << std::endl;
+							if (sf::Mouse::isButtonPressed(leftMouseButton)) {
+								level[tilePosition] = 1;
+							}
+							else if (sf::Mouse::isButtonPressed(rightMouseButton)) {
+								level[tilePosition] = 0;
+							}
+							if (!map.load("tileset.png", sf::Vector2u(32, 32), level, 16, 16))
+								std::cout << "Map loading went wrong" << std::endl;
 						}
-						else if (sf::Mouse::isButtonPressed(rightMouseButton)) {
-							level[tilePosition] = 0;
+					}
+					else if (position.y > 513 && position.y < windowHeight) {
+						sf::Vector2<float> mousePos = sf::Vector2f(position);
+						if (saveText.getGlobalBounds().contains(mousePos)) {
+							saveLevel(level);
 						}
-						if (!map.load("tileset.png", sf::Vector2u(32, 32), level, 16, 16))
-							std::cout << "Map loading went wrong" << std::endl;
+						else if (loadText.getGlobalBounds().contains(mousePos)) {
+							loadLevel(level);
+							if (!map.load("tileset.png", sf::Vector2u(32, 32), level, 16, 16)) {
+								return -1;
+							}
+						}
 					}
 				}
-				else if (position.y >= 512 && position.y < windowHeight) {
-					sf::Vector2<float> mousePos = sf::Vector2f(position);
-					if (saveText.getGlobalBounds().contains(mousePos)) {
-						saveLevel(level);
-					}
-					else if (loadText.getGlobalBounds().contains(mousePos)) {
-						loadLevel(level);
-						if (!map.load("tileset.png", sf::Vector2u(32, 32), level, 16, 16)) {
-							return -1;
-						}
-					}
-				}
-
 			}
-			
 		}
 
 		// draw the map
