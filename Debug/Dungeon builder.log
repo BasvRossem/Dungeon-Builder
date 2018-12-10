@@ -1,0 +1,58 @@
+﻿  main.cpp
+c:\users\basva\source\repos\dungeon builder\dungeon builder\tilemap.hpp(33): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\basva\source\repos\dungeon builder\dungeon builder\tilemap.hpp(34): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\basva\source\repos\dungeon builder\dungeon builder\tilemap.hpp(35): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\basva\source\repos\dungeon builder\dungeon builder\tilemap.hpp(36): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\basva\source\repos\dungeon builder\dungeon builder\tilemap.hpp(39): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+c:\users\basva\source\repos\dungeon builder\dungeon builder\tilemap.hpp(40): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+c:\users\basva\source\repos\dungeon builder\dungeon builder\tilemap.hpp(41): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+c:\users\basva\source\repos\dungeon builder\dungeon builder\tilemap.hpp(42): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  Dungeon builder.vcxproj -> C:\Users\basva\source\repos\Dungeon builder\Debug\Dungeon builder.exe
