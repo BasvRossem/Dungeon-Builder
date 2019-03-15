@@ -1,12 +1,11 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <iterator>
 #include <algorithm>
 #include "TileMap.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <algorithm>
+#include <stdlib.h>
 
 void writeToFile(sf::String name, std::vector<int> level) {
 	std::ofstream myfile;
@@ -185,10 +184,19 @@ void loadLevel(std::vector<int> & level) {
 	}
 }
 
+void loadMap(TileMap & map, std::vector<int> & level, sf::Vector2u & tileSize, sf::Vector2u & tileAmount) {
+	if (!map.load("TileSet.png", tileSize, level, tileAmount.x, tileAmount.y)) {
+		std::cout << "Something fucked up";
+	}
+}
+
 int main(){
-	int windowWidth = 512;
-	int windowHeight = 544;
+	int windowWidth = 1920;
+	int windowHeight = 1080;
 	int lastTilePos = 0;
+	sf::Vector2u tileSize = sf::Vector2u(32, 32);
+	sf::Vector2u tileAmount = sf::Vector2u(static_cast<unsigned int>(windowWidth / tileSize.x), static_cast<unsigned int>(windowHeight / tileSize.y) - 2);
+
 	auto leftMouseButton = sf::Mouse::Left;
 	auto rightMouseButton = sf::Mouse::Right;
 
@@ -197,29 +205,15 @@ int main(){
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tilemap");
 
 	// define the level with an array of tile indices
-	std::vector<int> level = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	};
+	std::vector<int> level = {};
+	for (unsigned int i = 0; i < (tileAmount.x * tileAmount.y); i++) {
+		level.push_back(0);
+	}
 
 	// create the tilemap from the level definition
 	TileMap map;
-	if (!map.load("tileset.png", sf::Vector2u(32, 32), level, 16, 16)) {
-		return -1;
+	if (!map.load("TileSet.png", tileSize, level, tileAmount.x, tileAmount.y)) {
+		std::cout << "Something fucked up";
 	}
 		
 	//
@@ -228,11 +222,11 @@ int main(){
 		std::cout << "Could not load font" << std::endl;
 	}
 	sf::Text loadText("Load", font, 24);
-	loadText.setPosition(sf::Vector2f(128,516));
+	loadText.setPosition(sf::Vector2f(128, windowHeight - 32));
 	loadText.setFillColor(sf::Color::White);
 
 	sf::Text saveText("Save", font, 24);
-	saveText.setPosition(sf::Vector2f(5, 516));
+	saveText.setPosition(sf::Vector2f(5, windowHeight - 32));
 	saveText.setFillColor(sf::Color::White);
 
 	// run the main loop
@@ -251,13 +245,12 @@ int main(){
 			std::cout << position.x << ", " << position.y << std::endl;
 			if (position.x > 0 && position.x < windowWidth && position.y > 0 && position.y < windowHeight) {
 				if (position.x > 0 && position.x < windowWidth) {
-					if (position.y > 0 && position.y < 511) {
-						int tileY = (position.y / 32) * 16;
-						int tileX = (position.x / 32);
+					if (position.y > 0 && position.y < windowHeight) {
+						int tileY = (position.y / tileSize.y) * tileAmount.x;
+						int tileX = (position.x / tileSize.x);
 						int tilePosition = tileY + tileX;
 
 						if (tilePosition != lastTilePos) {
-							//std::cout << tilePosition << ", " << lastTilePos << std::endl;
 							lastTilePos = tilePosition;
 							std::cout << lastTilePos << std::endl;
 							if (sf::Mouse::isButtonPressed(leftMouseButton)) {
@@ -266,20 +259,17 @@ int main(){
 							else if (sf::Mouse::isButtonPressed(rightMouseButton)) {
 								level[tilePosition] = 0;
 							}
-							if (!map.load("tileset.png", sf::Vector2u(32, 32), level, 16, 16))
-								std::cout << "Map loading went wrong" << std::endl;
+							loadMap(map, level, tileSize, tileAmount);
 						}
 					}
-					else if (position.y > 513 && position.y < windowHeight) {
+					else if (position.y > windowHeight-32 && position.y < windowHeight) {
 						sf::Vector2<float> mousePos = sf::Vector2f(position);
 						if (saveText.getGlobalBounds().contains(mousePos)) {
 							saveLevel(level);
 						}
 						else if (loadText.getGlobalBounds().contains(mousePos)) {
 							loadLevel(level);
-							if (!map.load("tileset.png", sf::Vector2u(32, 32), level, 16, 16)) {
-								return -1;
-							}
+							loadMap(map, level, tileSize, tileAmount);
 						}
 					}
 				}
