@@ -12,7 +12,7 @@ void writeToFile(sf::String name, std::vector<int> level) {
 	std::string stdName = name;
 	myfile.open(stdName);
 	std::cout << level.size() << std::endl;
-	for (int & character : level) {
+	for (int& character : level) {
 		myfile << character << " ";
 	}
 	myfile.close();
@@ -28,7 +28,7 @@ void saveLevel(std::vector<int> level) {
 	sf::Text saveFileText("Save file name:", font, 24);
 	saveFileText.setPosition(sf::Vector2f(8, 8));
 	saveFileText.setFillColor(sf::Color::White);
-	
+
 	sf::Text saveFileNameText("", font, 24);
 	saveFileNameText.setPosition(sf::Vector2f(8, 40));
 	saveFileNameText.setFillColor(sf::Color::White);
@@ -42,7 +42,7 @@ void saveLevel(std::vector<int> level) {
 			if (event.type == sf::Event::Closed)
 				saveWindow.close();
 
-			if (event.type == sf::Event::KeyPressed){
+			if (event.type == sf::Event::KeyPressed) {
 				sf::String name = saveFileNameText.getString();
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) { saveFileNameText.setString(name + "a"); }
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) { saveFileNameText.setString(name + "b"); }
@@ -70,21 +70,20 @@ void saveLevel(std::vector<int> level) {
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) { saveFileNameText.setString(name + "x"); }
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y)) { saveFileNameText.setString(name + "y"); }
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) { saveFileNameText.setString(name + "z"); }
-				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace)) { 
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace)) {
 					int lastPos = name.getSize();
-					name.erase(lastPos -1, 2);
-					saveFileNameText.setString(name); 
+					name.erase(lastPos - 1, 2);
+					saveFileNameText.setString(name);
 					std::string newName = saveFileNameText.getString();
 					std::cout << newName << std::endl;
 				}
-				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) { 
-					writeToFile(saveFileNameText.getString() + ".txt", level); 
+				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+					writeToFile(saveFileNameText.getString() + ".txt", level);
 					saveWindow.close();
 				}
 			}
 		}
-		
-		
+
 		saveWindow.clear();
 		saveWindow.draw(saveFileText);
 		saveWindow.draw(saveFileNameText);
@@ -96,7 +95,7 @@ void saveLevel(std::vector<int> level) {
 	//saveFile.close()
 }
 
-void readFromFile(std::string name, std::vector<int> & level) {
+void readFromFile(std::string name, std::vector<int>& level) {
 	std::ifstream myfile(name);
 
 	level = {};
@@ -108,7 +107,7 @@ void readFromFile(std::string name, std::vector<int> & level) {
 	}
 }
 
-void loadLevel(std::vector<int> & level) {
+void loadLevel(std::vector<int>& level) {
 	sf::RenderWindow loadWindow(sf::VideoMode(512, 256), "Tilemap");
 	sf::Font font;
 	if (!font.loadFromFile("PIXEARG_.ttf")) {
@@ -176,7 +175,6 @@ void loadLevel(std::vector<int> & level) {
 			}
 		}
 
-
 		loadWindow.clear();
 		loadWindow.draw(loadFileText);
 		loadWindow.draw(loadFileNameText);
@@ -184,22 +182,21 @@ void loadLevel(std::vector<int> & level) {
 	}
 }
 
-void loadMap(TileMap & map, std::vector<int> & level, sf::Vector2u & tileSize, sf::Vector2u & tileAmount) {
+void loadMap(TileMap& map, std::vector<int>& level, sf::Vector2u& tileSize, sf::Vector2u& tileAmount) {
 	if (!map.load("TileSet.png", tileSize, level, tileAmount.x, tileAmount.y)) {
 		std::cout << "Something fucked up";
 	}
 }
 
-int main(){
-	int windowWidth = 1920;
-	int windowHeight = 1080;
+int main() {
+	int windowWidth = 1280;
+	int windowHeight = 720;
 	int lastTilePos = 0;
 	sf::Vector2u tileSize = sf::Vector2u(32, 32);
 	sf::Vector2u tileAmount = sf::Vector2u(static_cast<unsigned int>(windowWidth / tileSize.x), static_cast<unsigned int>(windowHeight / tileSize.y) - 2);
 
 	auto leftMouseButton = sf::Mouse::Left;
 	auto rightMouseButton = sf::Mouse::Right;
-
 
 	// create the window
 	sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tilemap");
@@ -215,7 +212,7 @@ int main(){
 	if (!map.load("TileSet.png", tileSize, level, tileAmount.x, tileAmount.y)) {
 		std::cout << "Something fucked up";
 	}
-		
+
 	//
 	sf::Font font;
 	if (!font.loadFromFile("PIXEARG_.ttf")) {
@@ -243,34 +240,38 @@ int main(){
 		if (sf::Mouse::isButtonPressed(leftMouseButton) || sf::Mouse::isButtonPressed(rightMouseButton)) {
 			sf::Vector2i position = sf::Mouse::getPosition(window);
 			std::cout << position.x << ", " << position.y << std::endl;
-			if (position.x > 0 && position.x < windowWidth && position.y > 0 && position.y < windowHeight) {
-				if (position.x > 0 && position.x < windowWidth) {
-					if (position.y > 0 && position.y < windowHeight) {
-						int tileY = (position.y / tileSize.y) * tileAmount.x;
-						int tileX = (position.x / tileSize.x);
-						int tilePosition = tileY + tileX;
 
-						if (tilePosition != lastTilePos) {
-							lastTilePos = tilePosition;
-							std::cout << lastTilePos << std::endl;
-							if (sf::Mouse::isButtonPressed(leftMouseButton)) {
-								level[tilePosition] = 1;
-							}
-							else if (sf::Mouse::isButtonPressed(rightMouseButton)) {
-								level[tilePosition] = 0;
-							}
-							loadMap(map, level, tileSize, tileAmount);
+			// If the mouse is in the screen
+			if (position.x > 0 &&
+				position.x < windowWidth &&
+				position.y > 0 &&
+				position.y < windowHeight) {
+				if (position.y > 0 && position.y < windowHeight - 32) {
+					int tileY = (position.y / tileSize.y) * tileAmount.x;
+					int tileX = (position.x / tileSize.x);
+					int tilePosition = tileY + tileX;
+
+					if (tilePosition != lastTilePos) {
+						lastTilePos = tilePosition;
+						std::cout << lastTilePos << std::endl;
+						if (sf::Mouse::isButtonPressed(leftMouseButton)) {
+							level[tilePosition] = 1;
 						}
+						else if (sf::Mouse::isButtonPressed(rightMouseButton)) {
+							level[tilePosition] = 0;
+						}
+						loadMap(map, level, tileSize, tileAmount);
 					}
-					else if (position.y > windowHeight-32 && position.y < windowHeight) {
-						sf::Vector2<float> mousePos = sf::Vector2f(position);
-						if (saveText.getGlobalBounds().contains(mousePos)) {
-							saveLevel(level);
-						}
-						else if (loadText.getGlobalBounds().contains(mousePos)) {
-							loadLevel(level);
-							loadMap(map, level, tileSize, tileAmount);
-						}
+				}
+
+				else {
+					sf::Vector2<float> mousePos = sf::Vector2f(position);
+					if (saveText.getGlobalBounds().contains(mousePos)) {
+						saveLevel(level);
+					}
+					else if (loadText.getGlobalBounds().contains(mousePos)) {
+						loadLevel(level);
+						loadMap(map, level, tileSize, tileAmount);
 					}
 				}
 			}
